@@ -1,0 +1,46 @@
+[
+    {
+        "id": "15ce0b1f.fa6dd5",
+        "type": "inject",
+        "z": "154d7665.d74f4a",
+        "name": "",
+        "topic": "",
+        "payload": "toggle",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 119.10000610351562,
+        "y": 72.80000305175781,
+        "wires": [
+            [
+                "e0fa5bbe.44afa8",
+                "b7854732.ef00b8"
+            ]
+        ]
+    },
+    {
+        "id": "e0fa5bbe.44afa8",
+        "type": "led",
+        "z": "154d7665.d74f4a",
+        "board": "",
+        "pin": "5",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b7854732.ef00b8",
+        "type": "debug",
+        "z": "154d7665.d74f4a",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 450,
+        "y": 80,
+        "wires": []
+    }
+]
