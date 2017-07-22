@@ -1,0 +1,150 @@
+[
+    {
+        "id": "b9cdd1ee.f4754",
+        "type": "inject",
+        "z": "729fad96.0bda84",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "600",
+        "crontab": "",
+        "once": false,
+        "x": 83.10000610351562,
+        "y": 77.80000305175781,
+        "wires": [
+            [
+                "95fb3401.cdb1e8"
+            ]
+        ]
+    },
+    {
+        "id": "95fb3401.cdb1e8",
+        "type": "http request",
+        "z": "729fad96.0bda84",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "url": "http://opendata2.epa.gov.tw/AQX.json",
+        "tls": "",
+        "x": 151.10000610351562,
+        "y": 156.40000915527344,
+        "wires": [
+            [
+                "d77ca1fb.5ef2e"
+            ]
+        ]
+    },
+    {
+        "id": "40958174.ca68d",
+        "type": "debug",
+        "z": "729fad96.0bda84",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 410,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "d77ca1fb.5ef2e",
+        "type": "function",
+        "z": "729fad96.0bda84",
+        "name": "PM2.5Check",
+        "func": "var a = msg.payload;\nvar returnvale=[]\nvar returnTable=\"\";\na.forEach(function(e,i){\n    if( e['PM2.5']<=35){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Safe\" \n    })\n    }\n    else if( e['PM2.5']>=36 &&e['PM2.5']<54){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Medium\" \n    })\n\t}else if( e['PM2.5']>=54 &&e['PM2.5']<71){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Danger\" \n    })\n\t}else{\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Very Danger\" \n    })\n\t}\n   // if(e.SiteName=='土城'){\n    //    msg.pm25 = e['PM2.5'];\n    //}\n});\nvar returnTable=\"<table     width: 100%;>\";\nreturnvale=returnvale.sort(function (a, b){if(a.PM25>b.PM25)return 1; else return 0 })\nreturnvale.forEach(function(e){\n\t\t    returnTable+=\n\t\t\t\"<tr><td>\"+e.Site+\"</td>\"+\n\t\t\t\"<td>\"+e.PM25+\"</td>\"+\n\t\t\t\"<td>\"+e.SafeArea+\"</td></tr>\";\n\t\t});\n\t\treturnTable+=\"</table>\";\n msg.payload=returnTable;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 270,
+        "y": 240,
+        "wires": [
+            [
+                "40958174.ca68d",
+                "25926a4c.fefc16"
+            ]
+        ]
+    },
+    {
+        "id": "3db15749.7cb708",
+        "type": "e-mail",
+        "z": "729fad96.0bda84",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "tm731531@hotmail.com",
+        "dname": "Tom",
+        "x": 850,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "aff8f80f.8dea68",
+        "type": "function",
+        "z": "729fad96.0bda84",
+        "name": "SendMail",
+        "func": "var a = msg.payload;\n//var returnvale=[]\na.forEach(function(e,i){\n   //returnvale.push({\"Site\":e.SiteName,\"25\": e['PM2.5']})\n    \n    if(e.SiteName=='土城'){\n        msg.pm25 = e['PM2.5'];\n         msg.payload='on';\n    }\n});\n// msg.pm25=returnvale;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 411.10003662109375,
+        "y": 181.40000915527344,
+        "wires": [
+            [
+                "39ad8851.72e4e8",
+                "3db15749.7cb708"
+            ]
+        ]
+    },
+    {
+        "id": "39ad8851.72e4e8",
+        "type": "switch",
+        "z": "729fad96.0bda84",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 1,
+        "x": 550,
+        "y": 240,
+        "wires": [
+            [
+                "d37de819.fe1008"
+            ]
+        ]
+    },
+    {
+        "id": "d37de819.fe1008",
+        "type": "function",
+        "z": "729fad96.0bda84",
+        "name": "write email",
+        "func": "msg.payload='空汙指數太高'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 730,
+        "y": 240,
+        "wires": [
+            [
+                "3db15749.7cb708"
+            ]
+        ]
+    },
+    {
+        "id": "25926a4c.fefc16",
+        "type": "e-mail",
+        "z": "729fad96.0bda84",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "tm731531@hotmail.com;violalala0502@gmail.com;a5520592@gmail.com",
+        "dname": "Tom",
+        "x": 390,
+        "y": 380,
+        "wires": []
+    }
+]
