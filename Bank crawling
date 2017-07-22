@@ -1,0 +1,96 @@
+[
+    {
+        "id": "40472e78.2adae",
+        "type": "inject",
+        "z": "a1aaa592.4004a8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "x": 103.10000610351562,
+        "y": 58.80000305175781,
+        "wires": [
+            [
+                "12996f13.4bac41"
+            ]
+        ]
+    },
+    {
+        "id": "12996f13.4bac41",
+        "type": "http request",
+        "z": "a1aaa592.4004a8",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://rate.bot.com.tw/xrt?Lang=zh-TW",
+        "tls": "",
+        "x": 178.10000610351562,
+        "y": 151.40000915527344,
+        "wires": [
+            [
+                "6769601b.70dfb"
+            ]
+        ]
+    },
+    {
+        "id": "6769601b.70dfb",
+        "type": "html",
+        "z": "a1aaa592.4004a8",
+        "name": "nodeJP",
+        "tag": ".text-right.print_hide",
+        "ret": "html",
+        "as": "single",
+        "x": 320.1000061035156,
+        "y": 235.39999389648438,
+        "wires": [
+            [
+                "38106a50.441d56"
+            ]
+        ]
+    },
+    {
+        "id": "38106a50.441d56",
+        "type": "function",
+        "z": "a1aaa592.4004a8",
+        "name": "select",
+        "func": "var q = msg.payload;\nvar returnvalue=[];\nvar returnTable='<table     width: 100%;>';\nvar i = 0;\nvar names={};\nvar quota = \n\n[{'C': 22.93, 'A': 22.75, 'B': 24.34, 'Coin': 'AUD', 'D': 24.1,'index':3}, \n{'C': 22.75, 'A': 22.48, 'B': 24.59, 'Coin': 'CAD', 'D': 24.34,'index':4},\n{'C': 30.86, 'A': 30.33, 'B': 32.76, 'Coin': 'CHF', 'D': 32.52,'index':6},\n{'C': 4.42, 'A': 4.35, 'B': 4.79, 'Coin': 'CNY', 'D': 4.75,'index':19}, \n{'C': 33.25, 'A': 32.75, 'B': 35.72, 'Coin': 'EUR', 'D': 35.47,'index':15},\n{'C': 38.4, 'A': 37.53, 'B': 42.38, 'Coin': 'GBP', 'D': 41.74,'index':2}, \n{'C': 3.88, 'A': 3.76, 'B': 4.16, 'Coin': 'HKD', 'D': 4.14,'index':1}, \n{'C': 0.27, 'A': 0.26, 'B': 0.31, 'Coin': 'JPY', 'D': 0.31,'index':7}, \n{'C': 21.6, 'A': 21.36, 'B': 23.06, 'Coin': 'NZD', 'D': 22.87,'index':10}, \n{'C': 3.41, 'A': 3.07, 'B': 3.83, 'Coin': 'SEK', 'D': 3.76,'index':9}, \n{'C': 21.71, 'A': 21.29, 'B': 23.57, 'Coin': 'SGD', 'D': 23.39,'index':5},\n{'C': 0.87, 'A': 0.78, 'B': 0.95, 'Coin': 'THB', 'D': 0.93,'index':11}, \n{'C': 30.36, 'A': 30.06, 'B': 32.12, 'Coin': 'USD', 'D': 31.97,'index':0}]\n0\nq.forEach(function(element) {\n\n    if(i%4===0){\n\treturnTable+='<tr><td>';\n        if(i/4===0)names = {\"幣種\":\"美金\"};\n        if(i/4===1)names = {\"幣種\":\"港幣\"};\n        if(i/4===2)names = {\"幣種\":\"英鎊\"};\n        if(i/4===3)names = {\"幣種\":\"澳幣\"};\n        if(i/4===4)names = {\"幣種\":\"加拿大幣\"};\n        if(i/4===5)names = {\"幣種\":\"新加坡幣\"};\n        if(i/4===6)names = {\"幣種\":\"瑞士法郎\"};\n        if(i/4===7)names = {\"幣種\":\"日圓\"};\n        if(i/4===8)names = {\"幣種\":\"南非幣\"};\n        if(i/4===9)names = {\"幣種\":\"瑞典幣 \"};\n        if(i/4===10)names = {\"幣種\":\"紐元\"};\n        if(i/4===11)names = {\"幣種\":\"泰幣\"};\n        if(i/4===13)names = {\"幣種\":\"菲國比索\"};\n        if(i/4===14)names = {\"幣種\":\"印尼幣\"};\n        if(i/4===15)names = {\"幣種\":\"歐元\"};\n        if(i/4===16)names = {\"幣種\":\"韓元\"};\n        if(i/4===17)names = {\"幣種\":\"越南盾\"};\n        if(i/4===18)names = {\"幣種\":\"馬來幣 \"};\n        if(i/4===19)names = {\"幣種\":\"人民幣\"};\n        returnvalue.push(names);\n\t\treturnTable+=names.幣種;\n\t\treturnTable+='</td>';\n\t\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.A>element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t    \n    };\n\t if(i%4===1){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.B<element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t if(i%4===2){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.C>element){\n\t\t        returnTable+=\"<td style='color:red'>\";\n\t\t\t\treal=false;\t\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t if(i%4===3){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.D<element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t//returnTable +='<td>';\n    //returnTable \n    //returnvalue.push({\"COCO\":element})\n\treturnTable+='</td>';\n\t// if(i%4===0)returnTable+='</tr>';\n    i++;\n    console.log(element);\n})\nreturnTable+='</table>'\nmsg.payload=returnTable//;\"<table><tr><td style='color:red'>135</td><td style='color:red'>122</td></tr></table>\";//returnvalue;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 465.10003662109375,
+        "y": 154.40000915527344,
+        "wires": [
+            [
+                "92b624f6.6eac88",
+                "d14a2c69.7db85"
+            ]
+        ]
+    },
+    {
+        "id": "92b624f6.6eac88",
+        "type": "e-mail",
+        "z": "a1aaa592.4004a8",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "tm731531@hotmail.com;violalala0502@gmail.com",
+        "dname": "",
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "d14a2c69.7db85",
+        "type": "debug",
+        "z": "a1aaa592.4004a8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 630,
+        "y": 220,
+        "wires": []
+    }
+]
