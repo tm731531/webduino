@@ -1,0 +1,220 @@
+[
+    {
+        "id": "35dc0a58.3677d6",
+        "type": "inject",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "1800",
+        "crontab": "",
+        "once": false,
+        "x": 110,
+        "y": 100,
+        "wires": [
+            [
+                "8981656e.2b1b08"
+            ]
+        ]
+    },
+    {
+        "id": "8981656e.2b1b08",
+        "type": "http request",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "url": "http://opendata2.epa.gov.tw/AQX.json",
+        "tls": "",
+        "x": 178,
+        "y": 178.60000610351562,
+        "wires": [
+            [
+                "6d3c78aa.b30b78",
+                "2fd5700a.f6b7f",
+                "d8ef8792.62d128"
+            ]
+        ]
+    },
+    {
+        "id": "f8381f3b.0af48",
+        "type": "debug",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 810,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2fd5700a.f6b7f",
+        "type": "function",
+        "z": "b31c540.ff3b7a8",
+        "name": "PM2.5Check",
+        "func": "var a = msg.payload;\nvar returnvale=[]\nvar returnTable=\"\";\na.forEach(function(e,i){\n    if( e['PM2.5']<=35){\n   returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5']),\"CO\": parseInt(e['CO'])\n       ,\"FPMI\": parseInt(e['FPMI']),\"NO\": parseInt(e['NO']),\"NO2\": parseInt(e['NO2']),\"NOx\": parseInt(e['NOx'])\n       ,\"O3\": parseInt(e['O3']),\"PM10\": parseInt(e['PM10']),\"PSI\": parseInt(e['PSI']),\"SO2\": parseInt(e['SO2'])\n       ,\"WindDirec\": parseInt(e['WindDirec']),\"WindSpeed\": parseInt(e['WindSpeed']),\"SafeArea\":\"Safe\" \n   })\n    }\n    else if( e['PM2.5']>=36 &&e['PM2.5']<54){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5']),\"CO\": parseInt(e['CO'])\n        ,\"FPMI\": parseInt(e['FPMI']),\"NO\": parseInt(e['NO']),\"NO2\": parseInt(e['NO2']),\"NOx\": parseInt(e['NOx'])\n       ,\"O3\": parseInt(e['O3']),\"PM10\": parseInt(e['PM10']),\"PSI\": parseInt(e['PSI']),\"SO2\": parseInt(e['SO2'])\n       ,\"WindDirec\": parseInt(e['WindDirec']),\"WindSpeed\": parseInt(e['WindSpeed']),\"SafeArea\":\"Medium\" \n    })\n\t}else if( e['PM2.5']>=54 &&e['PM2.5']<71){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5']),\"CO\": parseInt(e['CO'])\n        ,\"FPMI\": parseInt(e['FPMI']),\"NO\": parseInt(e['NO']),\"NO2\": parseInt(e['NO2']),\"NOx\": parseInt(e['NOx'])\n       ,\"O3\": parseInt(e['O3']),\"PM10\": parseInt(e['PM10']),\"PSI\": parseInt(e['PSI']),\"SO2\": parseInt(e['SO2'])\n       ,\"WindDirec\": parseInt(e['WindDirec']),\"WindSpeed\": parseInt(e['WindSpeed']),\"SafeArea\":\"Danger\" \n    })\n\t}else{\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5']),\"CO\": parseInt(e['CO'])\n        ,\"FPMI\": parseInt(e['FPMI']),\"NO\": parseInt(e['NO']),\"NO2\": parseInt(e['NO2']),\"NOx\": parseInt(e['NOx'])\n       ,\"O3\": parseInt(e['O3']),\"PM10\": parseInt(e['PM10']),\"PSI\": parseInt(e['PSI']),\"SO2\": parseInt(e['SO2'])\n       ,\"WindDirec\": parseInt(e['WindDirec']),\"WindSpeed\": parseInt(e['WindSpeed']),\"SafeArea\":\"Very Danger\" \n    })\n\t}\n});\nvar returnTable=\"<table     width: 100%;>\";\nreturnvale=returnvale.sort(function (a, b){if(a.PM25>b.PM25)return 1; else return 0 });\n\t\nreturnTable+=\n\t\t\t\"<tr><td>地區</td>\"+\n\t\t\t\"<td>PM25</td>\"+\n\t\t\t\"<td>安全性</td>\"+\n\t\t\t\"<td>CO</td>\"+\n\t\t\t\"<td>FPMI</td>\"+\n\t\t\t\"<td>NO</td>\"+\n\t\t\t\"<td>NO2</td>\"+\n\t\t\t\"<td>NOx</td>\"+\n\t\t\t\"<td>O3</td>\"+\n\t\t\t\"<td>PM10</td>\"+\n\t\t\t\"<td>PSI</td>\"+\n\t\t\t\"<td>SO2</td>\"+\n\t\t\t\"<td>WindDirec</td>\"+\n\t\t\t\"<td>WindSpeed</td>\"+\n\t\t\t\"</tr>\";\nreturnvale.forEach(function(e){\n\t\t    returnTable+=\n\t\t\t\"<tr><td>\"+e.Site+\"</td>\"+\n\t\t\t\"<td>\"+e.PM25+\"</td>\"+\n\t\t\t\"<td>\"+e.SafeArea+\"</td>\"+\n\t\t\t\"<td>\"+e.CO+\"</td>\"+\n\t\t\t\"<td>\"+e.FPMI+\"</td>\"+\n\t\t\t\"<td>\"+e.NO+\"</td>\"+\n\t\t\t\"<td>\"+e.NO2+\"</td>\"+\n\t\t\t\"<td>\"+e.NOx+\"</td>\"+\n\t\t\t\"<td>\"+e.O3+\"</td>\"+\n\t\t\t\"<td>\"+e.PM10+\"</td>\"+\n\t\t\t\"<td>\"+e.PSI+\"</td>\"+\n\t\t\t\"<td>\"+e.SO2+\"</td>\"+\n\t\t\t\"<td>\"+e.WindDirec+\"</td>\"+\n\t\t\t\"<td>\"+e.WindSpeed+\"</td>\"+\n\t\t\t\"</tr>\";\n\t\t});\n\t\treturnTable+=\"</table>\";\n msg.payload=returnTable;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 430,
+        "y": 40,
+        "wires": [
+            [
+                "f2090623.70f718"
+            ]
+        ]
+    },
+    {
+        "id": "f2090623.70f718",
+        "type": "e-mail",
+        "z": "b31c540.ff3b7a8",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "tm731531@hotmail.com;",
+        "dname": "Tom",
+        "x": 630,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "ae8263f6.eaf25",
+        "type": "http request",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://rate.bot.com.tw/xrt?Lang=zh-TW",
+        "tls": "",
+        "x": 150,
+        "y": 500,
+        "wires": [
+            [
+                "cde32bbb.f09178"
+            ]
+        ]
+    },
+    {
+        "id": "cde32bbb.f09178",
+        "type": "html",
+        "z": "b31c540.ff3b7a8",
+        "name": "nodeJP",
+        "tag": ".text-right.print_hide",
+        "ret": "html",
+        "as": "single",
+        "x": 292,
+        "y": 583.9999847412109,
+        "wires": [
+            [
+                "77406138.97f8"
+            ]
+        ]
+    },
+    {
+        "id": "77406138.97f8",
+        "type": "function",
+        "z": "b31c540.ff3b7a8",
+        "name": "select",
+        "func": "var q = msg.payload;\nvar returnvalue=[];\nvar returnTable='<table     width: 100%;>';\nvar i = 0;\nvar names={};\nvar quota = \n\n[{'C': 22.93, 'A': 22.75, 'B': 24.34, 'Coin': 'AUD', 'D': 24.1,'index':3}, \n{'C': 22.75, 'A': 22.48, 'B': 24.59, 'Coin': 'CAD', 'D': 24.34,'index':4},\n{'C': 30.86, 'A': 30.33, 'B': 32.76, 'Coin': 'CHF', 'D': 32.52,'index':6},\n{'C': 4.42, 'A': 4.35, 'B': 4.79, 'Coin': 'CNY', 'D': 4.75,'index':19}, \n{'C': 33.25, 'A': 32.75, 'B': 35.72, 'Coin': 'EUR', 'D': 35.47,'index':15},\n{'C': 38.4, 'A': 37.53, 'B': 42.38, 'Coin': 'GBP', 'D': 41.74,'index':2}, \n{'C': 3.88, 'A': 3.76, 'B': 4.16, 'Coin': 'HKD', 'D': 4.14,'index':1}, \n{'C': 0.27, 'A': 0.26, 'B': 0.31, 'Coin': 'JPY', 'D': 0.31,'index':7}, \n{'C': 21.6, 'A': 21.36, 'B': 23.06, 'Coin': 'NZD', 'D': 22.87,'index':10}, \n{'C': 3.41, 'A': 3.07, 'B': 3.83, 'Coin': 'SEK', 'D': 3.76,'index':9}, \n{'C': 21.71, 'A': 21.29, 'B': 23.57, 'Coin': 'SGD', 'D': 23.39,'index':5},\n{'C': 0.87, 'A': 0.78, 'B': 0.95, 'Coin': 'THB', 'D': 0.93,'index':11}, \n{'C': 30.36, 'A': 30.06, 'B': 32.12, 'Coin': 'USD', 'D': 31.97,'index':0}]\n0\nq.forEach(function(element) {\n\n    if(i%4===0){\n\treturnTable+='<tr><td>';\n        if(i/4===0)names = {\"幣種\":\"美金\"};\n        if(i/4===1)names = {\"幣種\":\"港幣\"};\n        if(i/4===2)names = {\"幣種\":\"英鎊\"};\n        if(i/4===3)names = {\"幣種\":\"澳幣\"};\n        if(i/4===4)names = {\"幣種\":\"加拿大幣\"};\n        if(i/4===5)names = {\"幣種\":\"新加坡幣\"};\n        if(i/4===6)names = {\"幣種\":\"瑞士法郎\"};\n        if(i/4===7)names = {\"幣種\":\"日圓\"};\n        if(i/4===8)names = {\"幣種\":\"南非幣\"};\n        if(i/4===9)names = {\"幣種\":\"瑞典幣 \"};\n        if(i/4===10)names = {\"幣種\":\"紐元\"};\n        if(i/4===11)names = {\"幣種\":\"泰幣\"};\n        if(i/4===13)names = {\"幣種\":\"菲國比索\"};\n        if(i/4===14)names = {\"幣種\":\"印尼幣\"};\n        if(i/4===15)names = {\"幣種\":\"歐元\"};\n        if(i/4===16)names = {\"幣種\":\"韓元\"};\n        if(i/4===17)names = {\"幣種\":\"越南盾\"};\n        if(i/4===18)names = {\"幣種\":\"馬來幣 \"};\n        if(i/4===19)names = {\"幣種\":\"人民幣\"};\n        returnvalue.push(names);\n\t\treturnTable+=names.幣種;\n\t\treturnTable+='</td>';\n\t\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.A>element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t    \n    };\n\t if(i%4===1){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.B<element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t if(i%4===2){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.C>element){\n\t\t        returnTable+=\"<td style='color:red'>\";\n\t\t\t\treal=false;\t\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t if(i%4===3){\n\tvar real =true;\n\t    quota.forEach(function(e){\n\t\t    if(e.index==i/4&&e.D<element){\n\t\t        returnTable+=\"<td style='color:red'>\";\t\n\t\t\t\treal=false;\n\t\t    }\n\t\t});\n\t\tif(real){\n\t            returnTable+='<td>';\n\t\t}\n\t\treturnTable+=element+='</td>';\n\t};\n\t//returnTable +='<td>';\n    //returnTable \n    //returnvalue.push({\"COCO\":element})\n\treturnTable+='</td>';\n\t// if(i%4===0)returnTable+='</tr>';\n    i++;\n    console.log(element);\n})\nreturnTable+='</table>'\nmsg.payload=returnTable//;\"<table><tr><td style='color:red'>135</td><td style='color:red'>122</td></tr></table>\";//returnvalue;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 437.0000305175781,
+        "y": 503,
+        "wires": [
+            [
+                "80a58667.6953d8",
+                "1808c7e0.f127b8"
+            ]
+        ]
+    },
+    {
+        "id": "80a58667.6953d8",
+        "type": "e-mail",
+        "z": "b31c540.ff3b7a8",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "tm731531@hotmail.com;violalala0502@gmail.com",
+        "dname": "",
+        "x": 715,
+        "y": 507.3999938964844,
+        "wires": []
+    },
+    {
+        "id": "1808c7e0.f127b8",
+        "type": "debug",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 601.8999938964844,
+        "y": 568.5999908447266,
+        "wires": []
+    },
+    {
+        "id": "6d3c78aa.b30b78",
+        "type": "function",
+        "z": "b31c540.ff3b7a8",
+        "name": "SendToThingSpeak",
+        "func": "var a = msg.payload;\nvar returnvale=[]\nvar returnTable=\"\";\nvar info ={};\na.forEach(function(e,i){\n    if( e['PM2.5']<=35){\n   returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n       ,\"SafeArea\":\"Safe\" \n   })\n    }\n    else if( e['PM2.5']>=36 &&e['PM2.5']<54){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Medium\" \n    })\n\t}else if( e['PM2.5']>=54 &&e['PM2.5']<71){\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Danger\" \n    })\n\t}else{\n    returnvale.push({\"Site\":e.SiteName,\"PM25\": parseInt(e['PM2.5'])\n        ,\"SafeArea\":\"Very Danger\" \n    })\n\t}\n    if(e.SiteName=='永和'){\n        info = e;\n    }\n});\nvar returnTable=\"<table     width: 100%;>\";\nreturnvale=returnvale.sort(function (a, b){if(a.PM25>b.PM25)return 1; else return 0 })\nreturnvale.forEach(function(e){\n\t\t    returnTable+=\n\t\t\t\"<tr><td>\"+e.Site+\"</td>\"+\n\t\t\t\"<td>\"+e.PM25+\"</td>\"+\n\t\t\t\"<td>\"+e.SafeArea+\"</td></tr>\";\n\t\t});\n\t\treturnTable+=\"</table>\";\n msg.payload=returnTable;\n\nmsg.queryyoungho='&field1='+info['CO']+'&field2='+info['FPMI']+'&field3='+info['NO']+'&field4='+info['NO2']+\n          '&field5='+info['SO2']+'&field6='+info['O3']+'&field7='+info['PSI']+'&field8='+info['PM2.5'];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 430,
+        "y": 180,
+        "wires": [
+            [
+                "ecd1607a.ab5"
+            ]
+        ]
+    },
+    {
+        "id": "ecd1607a.ab5",
+        "type": "http request",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "https://api.thingspeak.com/update?api_key=9GU5OKE0IFPZR5WA&{{{queryyoungho}}}",
+        "tls": "",
+        "x": 630,
+        "y": 180,
+        "wires": [
+            [
+                "f8381f3b.0af48"
+            ]
+        ]
+    },
+    {
+        "id": "d8ef8792.62d128",
+        "type": "function",
+        "z": "b31c540.ff3b7a8",
+        "name": "SendToThingSpeakPM2.5",
+        "func": "var a = msg.payload;\nvar infoMa ={};\nvar infoTai ={};\nvar infoJu ={};\nvar infoWha ={};\nvar infoMei ={};\nvar infoSa ={};\nvar infoYu ={};\nvar infoZau ={};\na.forEach(function(e,i){\n  \n    if(e.SiteName=='臺西'){\n        infoMa = e;\n    } if(e.SiteName=='臺南'){\n        infoTai = e;\n    } if(e.SiteName=='竹東'){\n        infoJu = e;\n    } if(e.SiteName=='花蓮'){\n        infoWha = e;\n    } if(e.SiteName=='美濃'){\n        infoMei = e;\n    } if(e.SiteName=='沙鹿'){\n        infoSa = e;\n    } if(e.SiteName=='永和'){\n        infoYu = e;\n    } if(e.SiteName=='彰化'){\n        infoZau = e;\n    }\n});\n\nmsg.query='&field1='+infoMa['PM2.5']+'&field2='+infoTai['PM2.5']+'&field3='+infoJu['PM2.5']+'&field4='+infoWha['PM2.5']+\n          '&field5='+infoMei['PM2.5']+'&field6='+infoSa['PM2.5']+'&field7='+infoYu['PM2.5']+'&field8='+infoZau['PM2.5'];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 280,
+        "wires": [
+            [
+                "18707943.319f17"
+            ]
+        ]
+    },
+    {
+        "id": "18707943.319f17",
+        "type": "http request",
+        "z": "b31c540.ff3b7a8",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "https://api.thingspeak.com/update?api_key=Y0A0Y1CIPMA06NGJ&{{{query}}}",
+        "tls": "",
+        "x": 650,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    }
+]
