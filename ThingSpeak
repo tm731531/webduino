@@ -1,2 +1,6 @@
 [{"各地pm2.5":"https://thingspeak.com/channels/306555"},
-{"永和監控":"https://thingspeak.com/channels/306499"}]
+{"永和監控":"https://thingspeak.com/channels/306499"},
+{"線上資料集biostat":"http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets"},
+{"線上資料集Kaggle":"http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets"},
+{"線上資料集OpenData":"http://data.gov.tw/"}
+]
